@@ -18,7 +18,7 @@ import Message from "./Message";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import SendIcon from "@mui/icons-material/Send";
 import MicIcon from "@mui/icons-material/Mic";
-import {
+import React, {
   KeyboardEventHandler,
   MouseEventHandler,
   useRef,
@@ -90,6 +90,15 @@ const StyledInput = styled.input`
   margin-left: 15px;
   margin-right: 15px;
 `;
+const StyledInputImg = styled.input`
+  outline: none;
+  border: none;
+  border-radius: 10px;
+  background-color: whitesmoke;
+  padding: 15px;
+  margin-left: 15px;
+  margin-right: 15px;
+`;
 
 const EndOfMessagesForAutoScroll = styled.div`
   margin-bottom: 30px;
@@ -103,6 +112,7 @@ const ConversationScreen = ({
   messages: IMessage[];
 }) => {
   const [newMessage, setNewMessage] = useState("");
+  const [newImg, setNewImg] = useState<File | null>(null);
   const [loggedInUser, _loading, _error] = useAuthState(auth);
 
   const conversationUsers = conversation.users;
@@ -116,7 +126,6 @@ const ConversationScreen = ({
 
   const [messagesSnapshot, messagesLoading, __error] =
     useCollection(queryGetMessages);
-
 
   const showMessages = () => {
     // If front-end is loading messages behind the scenes, display messages retrieved from Next SSR (passed down from [id].tsx)
@@ -181,6 +190,12 @@ const ConversationScreen = ({
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleImgUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files !== null) {
+      setNewImg(event.target.files[0]);
+    }
+  };
+
   return (
     <>
       <StyledRecipientHeader>
@@ -221,6 +236,12 @@ const ConversationScreen = ({
         <StyledInput
           value={newMessage}
           onChange={(event) => setNewMessage(event.target.value)}
+          onKeyDown={sendMessageOnEnter}
+        />
+        <StyledInputImg
+          type="file"
+          id="file"
+          onChange={handleImgUpload}
           onKeyDown={sendMessageOnEnter}
         />
         <IconButton onClick={sendMessageOnClick} disabled={!newMessage}>

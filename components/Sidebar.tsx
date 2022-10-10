@@ -126,7 +126,6 @@ export default function Sidebar() {
       console.log("ERROR LOGGING OUT", error);
     }
   };
-
   return (
     <Container>
       <Header>
